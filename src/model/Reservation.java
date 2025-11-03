@@ -6,10 +6,10 @@ import java.util.Date;
 public class Reservation {
 
     //Adding variables
-    private Customer customer;
-    private IRoom room;
-    private Date checkInDate;
-    private Date checkOutDate;
+    private final Customer customer;
+    private final IRoom room;
+    private final Date checkInDate;
+    private final Date checkOutDate;
 
     //Implement constructor
     public Reservation(Customer customer, IRoom room, Date checkInDate, Date checkOutDate){

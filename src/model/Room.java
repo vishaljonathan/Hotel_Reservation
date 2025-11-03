@@ -3,9 +3,9 @@ package model;
 public class Room implements IRoom{
 
     //Add Variables
-    private String roomNumber;
-    private Double price;
-    private RoomType roomType;
+    private final String roomNumber;
+    private final Double price;
+    private final RoomType roomType;
 
     //Implement Constructor
     public Room(String roomNumber, Double price, RoomType roomType){

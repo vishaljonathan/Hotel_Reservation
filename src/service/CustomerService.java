@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CustomerService {
-    private static Map<String,Customer> customerList = new HashMap<>();
+    private static final Map<String,Customer> customerList = new HashMap<>();
     private static CustomerService customerService = null;
 
     private CustomerService(){

@@ -7,8 +7,8 @@ import model.Reservation;
 import java.util.*;
 
 public class ReservationService {
-    private static Map<String,IRoom>  roomList = new HashMap<>();
-    private static Set<Reservation> reservationList = new HashSet<>();
+    private static final Map<String,IRoom>  roomList = new HashMap<>();
+    private static final Set<Reservation> reservationList = new HashSet<>();
     private static ReservationService reservationService = null;
 
     private ReservationService(){
