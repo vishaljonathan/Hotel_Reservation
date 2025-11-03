@@ -39,7 +39,7 @@ public class HotelResource {
     public Reservation bookARoom(String customerEmail, IRoom room, Date checkInDate, Date CheckOutDate){
         Customer customer = customerService.getCustomer(customerEmail);
         if(customer == null){
-            System.out.println("User not found");
+            throw new IllegalArgumentException("User not found: " + customerEmail);
         }
         return reservationService.reserveARoom(customer,room,checkInDate,CheckOutDate);
     }
@@ -47,7 +47,7 @@ public class HotelResource {
     public Collection <Reservation> getCustomersReservation(String customerEmail){
         Customer customer = customerService.getCustomer(customerEmail);
         if(customer == null){
-            System.out.println("User not found");
+            throw new IllegalArgumentException("User not found: " + customerEmail);
         }
         return reservationService.getCustomersReservation(customer);
     }

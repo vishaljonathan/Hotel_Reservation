@@ -56,25 +56,51 @@ public class AdminMenu {
 
     private static void addARoom() {
         List<IRoom> newRooms = new ArrayList<>();
-        String addAnother;
+        String addAnother = null;
 
         do {
-            System.out.print("Enter room number: ");
-            String roomNumber = scanner.nextLine();
+            try {
+                System.out.print("Enter room number: ");
+                String roomNumber = scanner.nextLine();
+                if (roomNumber == null || roomNumber.isBlank()) {
+                    System.out.println("Room number cannot be empty.");
+                    continue;
+                }
 
-            System.out.print("Enter price per night: ");
-            double price = Double.parseDouble(scanner.nextLine());
+                System.out.print("Enter price per night: ");
+                String priceInput = scanner.nextLine();
+                double price;
+                try {
+                    price = Double.parseDouble(priceInput);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid price. Please enter a numeric value.");
+                    continue;
+                }
+                if (price < 0.0) {
+                    System.out.println("Price cannot be negative.");
+                    continue;
+                }
 
-            System.out.print("Enter room type (SINGLE/DOUBLE): ");
-            String type = scanner.nextLine().toUpperCase();
+                System.out.print("Enter room type (SINGLE/DOUBLE): ");
+                String type = scanner.nextLine().toUpperCase();
+                model.RoomType roomType;
+                try {
+                    roomType = model.RoomType.valueOf(type);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Invalid room type. Use SINGLE or DOUBLE.");
+                    continue;
+                }
 
-            model.RoomType roomType = model.RoomType.valueOf(type);
-            IRoom room = new model.Room(roomNumber, price, roomType);
-            newRooms.add(room);
+                IRoom room = new model.Room(roomNumber, price, roomType);
+                newRooms.add(room);
 
-            System.out.print("Add another room? (y/n): ");
-            addAnother = scanner.nextLine();
-        } while (addAnother.equalsIgnoreCase("y"));
+                System.out.print("Add another room? (y/n): ");
+                addAnother = scanner.nextLine();
+            } catch (Exception ex) {
+                System.out.println("Error adding room: " + ex.getMessage());
+                addAnother = "n";
+            }
+        } while (addAnother != null && addAnother.equalsIgnoreCase("y"));
 
         adminResource.addRoom(newRooms);
         System.out.println("Room(s) added successfully!");

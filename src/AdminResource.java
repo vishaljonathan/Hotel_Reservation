@@ -28,13 +28,17 @@ public class AdminResource {
     }
 
     public void addRoom(List<IRoom> rooms){
-        for(IRoom room:rooms){
-            reservationService.addRoom(room);
+        for(IRoom room: rooms){
+            try {
+                reservationService.addRoom(room);
+            } catch (Exception e) {
+                System.out.println("Failed to add room: " + e.getMessage());
+            }
         }
     }
 
     public Collection<IRoom> getAllRooms(){
-        return reservationService.findRooms(null,null);
+        return reservationService.getAllRooms();
     }
 
     public Collection<Customer> getAllCustomers(){
