@@ -56,8 +56,8 @@ public class MainMenu {
             System.out.print("Enter check-out date (yyyy-mm-dd): ");
             String checkOutStr = scanner.nextLine();
 
-            Date checkIn = new Date(checkInStr);
-            Date checkOut = new Date(checkOutStr);
+            Date checkIn = java.sql.Date.valueOf(checkInStr);
+            Date checkOut = java.sql.Date.valueOf(checkOutStr);
 
             if (!checkIn.before(checkOut)) {
                 System.out.println("Check-in date must be before check-out date.");
