@@ -67,7 +67,7 @@ public class ReservationService {
 
         //Prevent double booking for the same room
         for(Reservation r : reservationList){
-            if(r.iRoom().getRoomNumber().equals(storedRoom)){
+            if(r.iRoom().equals(storedRoom)){
                 Date reservedIn = r.getCheckInDate();
                 Date reservedOut = r.getCheckOutDate();
                 boolean validCheckIn = checkInDate.before(reservedOut) && checkOutDate.after(reservedIn);
@@ -95,7 +95,7 @@ public class ReservationService {
             Date reservedCheckOut = reservation.getCheckOutDate();
             boolean validCheckIn = checkInDate.before(reservedCheckOut) && checkOutDate.after(reservedCheckIn);
             if(validCheckIn){
-                availableRooms.remove(reservation.iRoom().getRoomNumber());
+                availableRooms.remove(reservation.iRoom());
             }
         }
 
@@ -119,7 +119,7 @@ public class ReservationService {
             Date reservedCheckOut = reservation.getCheckOutDate();
             boolean overlap = recCheckIn.before(reservedCheckOut) && recCheckOut.after(reservedCheckIn);
             if (overlap) {
-                recommended.remove(reservation.iRoom().getRoomNumber());
+                recommended.remove(reservation.iRoom());
             }
         }
 
