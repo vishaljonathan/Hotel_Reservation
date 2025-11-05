@@ -2,6 +2,7 @@ import model.Customer;
 import model.IRoom;
 import model.Reservation;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Scanner;
@@ -52,44 +53,80 @@ public class MainMenu {
             }
 
             System.out.print("Enter check-in date (yyyy-mm-dd): ");
-            String checkInStr = scanner.nextLine();
+            Date checkIn = java.sql.Date.valueOf(scanner.nextLine());
             System.out.print("Enter check-out date (yyyy-mm-dd): ");
-            String checkOutStr = scanner.nextLine();
-
-            Date checkIn = java.sql.Date.valueOf(checkInStr);
-            Date checkOut = java.sql.Date.valueOf(checkOutStr);
+            Date checkOut = java.sql.Date.valueOf(scanner.nextLine());
 
             if (!checkIn.before(checkOut)) {
                 System.out.println("Check-in date must be before check-out date.");
                 return;
             }
 
+            // First search attempt
             Collection<IRoom> availableRooms = hotelResource.findARoom(checkIn, checkOut);
 
+            Date recCheckIn = null;
+            Date recCheckOut = null;
+            boolean usingRecommended = false;
+
             if (availableRooms.isEmpty()) {
-                System.out.println("No rooms available for the selected dates.");
-                return;
-            } else {
-                System.out.println("Available Rooms:");
-                availableRooms.forEach(System.out::println);
+                // If none found, suggest +7 day recommended dates
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(checkIn);
+                cal.add(Calendar.DAY_OF_MONTH, 7);
+                recCheckIn = new Date(cal.getTimeInMillis());
 
-                System.out.print("Enter room number to reserve: ");
-                String roomNumber = scanner.nextLine();
-                IRoom room = hotelResource.getRoom(roomNumber);
+                cal.setTime(checkOut);
+                cal.add(Calendar.DAY_OF_MONTH, 7);
+                recCheckOut = new Date(cal.getTimeInMillis());
 
-                if (room != null) {
-                    try {
-                        Reservation reservation = hotelResource.bookARoom(email, room, checkIn, checkOut);
-                        System.out.println("Reservation confirmed: " + reservation);
-                    } catch (Exception e) {
-                        System.out.println("Could not book room: " + e.getMessage());
-                    }
+                System.out.println("\nNo rooms available for selected dates.");
+                System.out.println("Recommended rooms for new dates: " + recCheckIn + " to " + recCheckOut);
+
+                Collection<IRoom> recommendedRooms = hotelResource.findARoom(recCheckIn, recCheckOut);
+
+                if (recommendedRooms.isEmpty()) {
+                    System.out.println("No rooms available for the recommended dates either.");
+                    return;
                 } else {
-                    System.out.println("Invalid room number.");
+                    recommendedRooms.forEach(System.out::println);
+
+                    System.out.print("Would you like to book for the recommended dates? (y/n): ");
+                    String confirm = scanner.nextLine();
+                    if (confirm.equalsIgnoreCase("y")) {
+                        availableRooms = recommendedRooms;
+                        usingRecommended = true;
+                    } else {
+                        return;
+                    }
                 }
             }
-        } catch (IllegalArgumentException ex) {
-            System.out.println("Input error: " + ex.getMessage());
+
+            // Proceed with available rooms (either original or recommended)
+            System.out.println("\nAvailable Rooms:");
+            availableRooms.forEach(System.out::println);
+
+            System.out.print("Enter room number to reserve: ");
+            String roomNumber = scanner.nextLine();
+            IRoom room = hotelResource.getRoom(roomNumber);
+
+            if (room == null) {
+                System.out.println("Invalid room number.");
+                return;
+            }
+
+            Date finalCheckIn = usingRecommended ? recCheckIn : checkIn;
+            Date finalCheckOut = usingRecommended ? recCheckOut : checkOut;
+
+            try {
+                Reservation reservation = hotelResource.bookARoom(email, room, finalCheckIn, finalCheckOut);
+                System.out.println("\nReservation confirmed: " + reservation);
+            } catch (Exception e) {
+                System.out.println("Could not book room: " + e.getMessage());
+            }
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input: " + e.getMessage());
         } catch (Exception e) {
             System.out.println("Invalid date format or input.");
         }
