@@ -99,36 +99,7 @@ public class ReservationService {
             }
         }
 
-        if (!availableRooms.isEmpty()) {
-            return availableRooms;
-        }
-
-        //If room not available in the specified check in and check out dates, +7 days search
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(checkInDate);
-        cal.add(Calendar.DAY_OF_MONTH, 7);
-        Date recCheckIn = cal.getTime();
-
-        cal.setTime(checkOutDate);
-        cal.add(Calendar.DAY_OF_MONTH, 7);
-        Date recCheckOut = cal.getTime();
-
-        List<IRoom> recommended = new ArrayList<>(roomList.values());
-        for (Reservation reservation : reservationList) {
-            Date reservedCheckIn = reservation.getCheckInDate();
-            Date reservedCheckOut = reservation.getCheckOutDate();
-            boolean overlap = recCheckIn.before(reservedCheckOut) && recCheckOut.after(reservedCheckIn);
-            if (overlap) {
-                recommended.remove(reservation.iRoom());
-            }
-        }
-
-        if (!recommended.isEmpty()) {
-            System.out.println("No rooms available for requested dates. Showing recommended rooms for dates: " + recCheckIn + " to " + recCheckOut);
-            return recommended;
-        }
-
-        return Collections.emptyList();
+        return availableRooms;
     }
 
     public Collection<Reservation> getCustomersReservation(Customer customer){

@@ -89,7 +89,6 @@ public class MainMenu {
                     System.out.println("No rooms available for the recommended dates either.");
                     return;
                 } else {
-                    recommendedRooms.forEach(System.out::println);
 
                     System.out.print("Would you like to book for the recommended dates? (y/n): ");
                     String confirm = scanner.nextLine();
